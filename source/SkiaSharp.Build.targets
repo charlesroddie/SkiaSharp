@@ -40,6 +40,13 @@
     <MSBuildWarningsAsMessages>MSB9004</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="mdoc" Version="5.7.4.3" PrivateAssets="All" />
   </ItemGroup>
@@ -51,14 +58,15 @@
     Generate the assembly versioning attributes.
     ===================================================================================================================
   -->
-  <Target Name="_GenerateAssemblyVersionInfo" BeforeTargets="CoreCompile" Condition=" '$(SkipGenerateAssemblyVersionInfo)' != 'true' ">
+  <Target Name="_GenerateAssemblyVersionInfo" BeforeTargets="CoreCompile"
+          Condition=" '$(SkipGenerateAssemblyVersionInfo)' != 'true' ">
     <PropertyGroup>
       <_VersionSourceFile>$(IntermediateOutputPath)\$(AssemblyName).Version.cs</_VersionSourceFile>
       <_VersionTxtFile>$(MSBuildThisFileDirectory)..\VERSIONS.txt</_VersionTxtFile>
     </PropertyGroup>
     <_GenerateVersionFiles VersionsFile="$(_VersionTxtFile)"
                            OutFile="$(_VersionSourceFile)"
-                           PackagingGroup="$(PackagingGroup)"
+                           PackageId="$(PackageId)"
                            GitSha="$(AssemblyVersionGitSha)" />
     <ItemGroup>
       <FileWrites Include="$(_VersionSourceFile)" />
@@ -73,7 +81,8 @@
     Sign the assembly using sn.
     ===================================================================================================================
   -->
-  <Target Name="_SignAssembly" AfterTargets="CoreCompile" Condition=" '$(IsWindows)' != 'true' and '$(SignAssembly)' == 'true' ">
+  <Target Name="_SignAssembly" AfterTargets="CoreCompile"
+          Condition=" '$(IsWindows)' != 'true' and '$(SignAssembly)' == 'true' ">
     <Exec Command="sn -q -R @(IntermediateAssembly -> '&quot;%(Identity)&quot;') &quot;$(AssemblyOriginatorKeyFile)&quot;" />
   </Target>
 
@@ -90,41 +99,14 @@
 
   <!--
     ===================================================================================================================
-    _CopyToOutputDirectory
-
-    Copy the project output into the root output folder.
-    ===================================================================================================================
-  -->
-  <Target Name="_CopyToOutputDirectory" AfterTargets="Build" Condition=" '$(SkipCopyToOutputDirectory)' != 'true' ">
-    <ItemGroup Condition=" '$(PackagingLocation)' == '' ">
-      <_CopyItems Include="$(TargetPath)" Dest="nuget\lib\$(PackagingPlatform)\$(TargetFileName)" />
-      <_CopyItems Include="$(TargetDir)$(TargetName).xml" Dest="nuget\lib\$(PackagingPlatform)\$(TargetName).xml" Condition=" Exists('$(TargetDir)$(TargetName).xml') " />
-      <_CopyItems Include="$(TargetDir)$(TargetName).pdb" Dest="nuget\lib\$(PackagingPlatform)\$(TargetName).pdb" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(PackagingLocation)' != '' ">
-      <_CopyItems Include="$(TargetPath)" Dest="nuget\$(PackagingLocation)\$(TargetFileName)" />
-      <_CopyItems Include="$(TargetDir)$(TargetName).xml" Dest="nuget\$(PackagingLocation)\$(TargetName).xml" Condition=" Exists('$(TargetDir)$(TargetName).xml') " />
-      <_CopyItems Include="$(TargetDir)$(TargetName).pdb" Dest="nuget\$(PackagingLocation)\$(TargetName).pdb" />
-    </ItemGroup>
-    <ItemGroup>
-      <_CopyItems Include="@(_NoneWithTargetPath)" Dest="%(_NoneWithTargetPath.TargetPath)" />
-    </ItemGroup>
-    <Copy Condition=" '@(_CopyItems)' != '' "
-          SourceFiles="@(_CopyItems)"
-          DestinationFiles="@(_CopyItems -> '$(MSBuildThisFileDirectory)..\output\$(PackagingGroup)\%(Dest)')"
-          ContinueOnError="false"
-          Retries="0" />
-  </Target>
-
-  <!--
-    ===================================================================================================================
     MDocGenerateDocs
 
     Generated the XML documentation file using mdoc.
     This runs during the build phase.
     ===================================================================================================================
   -->
-  <Target Name="MDocGenerateDocs" AfterTargets="CoreCompile" Condition=" '$(SkipMDocGenerateDocs)' != 'true' ">
+  <Target Name="MDocGenerateDocs" AfterTargets="CoreCompile"
+          Condition=" '$(SkipMDocGenerateDocs)' != 'true' ">
     <PropertyGroup>
       <MDocVersion Condition=" '%(Identity)' == 'mdoc' ">@(PackageReference -> '%(Version)')</MDocVersion>
       <MDocPackagePath Condition=" '%(Name)' == 'mdoc' ">@(PackageDefinitions -> '%(ResolvedPath)')</MDocPackagePath>
@@ -157,30 +139,25 @@
     Generates the assembly versioning files.
     ===================================================================================================================
   -->
-  <UsingTask TaskName="_GenerateVersionFiles" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >  
+  <UsingTask TaskName="_GenerateVersionFiles" TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
     <ParameterGroup>
       <VersionsFile ParameterType="System.String" />
       <OutFile ParameterType="System.String" />
-      <PackagingGroup ParameterType="System.String" />
+      <PackageId ParameterType="System.String" />
       <GitSha ParameterType="System.String" />
     </ParameterGroup>
     <Task>
-      <!-- <Reference Include="" /> -->
       <Using Namespace="System.Text.RegularExpressions" />
       <Code Type="Fragment" Language="cs"><![CDATA[
         var versions = File.ReadAllText(VersionsFile);
-
-        var group = PackagingGroup;
-        if (PackagingGroup.Contains('.')) {
-          group = PackagingGroup.Split('.')[0];
-        }
 
         if (!string.IsNullOrEmpty(GitSha)) {
           GitSha = "-" + GitSha;
         }
 
-        var assemblyMatch = Regex.Match(versions, @"^" + group + @"\s*assembly\s*(.*)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-        var fileMatch = Regex.Match(versions, @"^" + group + @"\s*file\s*(.*)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        var assemblyMatch = Regex.Match(versions, @"^" + PackageId + @"\s*assembly\s*(.*)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        var fileMatch = Regex.Match(versions, @"^" + PackageId + @"\s*file\s*(.*)$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         var contents = "using System.Reflection;\n\n";
         contents += "[assembly: AssemblyVersion(\"" + assemblyMatch.Groups[1].Value.Trim() + "\")]\n";

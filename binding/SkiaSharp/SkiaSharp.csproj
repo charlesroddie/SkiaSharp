@@ -1,0 +1,125 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.29">
+  <Import Project="..\..\source\SkiaSharp.Build.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard1.3;netstandard2.0;net45;monoandroid9.0;xamarinios1.0;xamarintvos1.0;xamarinwatchos1.0;xamarinmac2.0;tizen40;</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">netstandard1.3;netstandard2.0;net45;monoandroid9.0;xamarinios1.0;xamarintvos1.0;xamarinwatchos1.0;xamarinmac2.0;tizen40;uap10.0.10240;</TargetFrameworks>
+    <OutputTypeEx>library</OutputTypeEx>
+    <RootNamespace>SkiaSharp</RootNamespace>
+    <AssemblyName>SkiaSharp</AssemblyName>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IsBindingProject>true</IsBindingProject>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Binding.Shared\**\*.cs" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Binding\**\*.cs" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="nuget\**\*" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- .NET Standard -->
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+    <DefineConstants>$(DefineConstants);NET_STANDARD</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard1'))">
+    <PackageReference Include="System.IO.UnmanagedMemoryStream" Version="4.3.0" />
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard2'))">
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+  </ItemGroup>
+
+  <!-- .NET Framework -->
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <DefineConstants>$(DefineConstants);__DESKTOP__</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <None Include="..\..\output\native\windows\x64\libSkiaSharp.dll" Link="nuget\runtimes\win-x64\native\libSkiaSharp.dll" Condition=" '$(IsWindows)' == 'true' " />
+    <None Include="..\..\output\native\windows\x86\libSkiaSharp.dll" Link="nuget\runtimes\win-x86\native\libSkiaSharp.dll" Condition=" '$(IsWindows)' == 'true' " />
+    <None Include="..\..\output\native\osx\libSkiaSharp.dylib" Link="nuget\runtimes\osx\native\libSkiaSharp.dylib" Condition=" '$(IsMacOS)' == 'true' " />
+    <None Include="..\..\output\native\linux\x64\libSkiaSharp.so" Link="nuget\runtimes\linux-x64\native\libSkiaSharp.so" Condition=" '$(IsLinux)' == 'true' " />
+  </ItemGroup>
+
+  <!-- Xamarin.Android -->
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid'))">
+    <AndroidResgenFile>Resource.Designer.cs</AndroidResgenFile>
+    <DesignTimeBuild>false</DesignTimeBuild>
+  </PropertyGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('monoandroid'))">
+    <Compile Include="Resource.Designer.cs" />
+    <EmbeddedNativeLibrary Include="..\..\output\native\android\arm64-v8a\libSkiaSharp.so" Link="libs\arm64-v8a\libSkiaSharp.so" />
+    <EmbeddedNativeLibrary Include="..\..\output\native\android\armeabi-v7a\libSkiaSharp.so" Link="libs\armeabi-v7a\libSkiaSharp.so" />
+    <EmbeddedNativeLibrary Include="..\..\output\native\android\x86\libSkiaSharp.so" Link="libs\x86\libSkiaSharp.so" />
+    <EmbeddedNativeLibrary Include="..\..\output\native\android\x86_64\libSkiaSharp.so" Link="libs\x86_64\libSkiaSharp.so" />
+  </ItemGroup>
+
+  <!-- Xamarin.iOS -->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('xamarinios'))">
+    <Compile Include="AssemblyInfo.ios.cs" />
+    <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
+    <ObjcBindingCoreSource Include="StructsAndEnums.cs" />
+    <NativeReference Include="..\..\output\native\ios\libSkiaSharp.framework" Kind="Framework" />
+  </ItemGroup>
+
+  <!-- Xamarin.tvOS -->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('xamarintvos'))">
+    <Compile Include="AssemblyInfo.ios.cs" />
+    <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
+    <ObjcBindingCoreSource Include="StructsAndEnums.cs" />
+    <NativeReference Include="..\..\output\native\tvos\libSkiaSharp.framework" Kind="Framework" />
+  </ItemGroup>
+
+  <!-- Xamarin.watchOS -->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('xamarinwatchos'))">
+    <Compile Include="AssemblyInfo.ios.cs" />
+    <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
+    <ObjcBindingCoreSource Include="StructsAndEnums.cs" />
+    <NativeReference Include="..\..\output\native\watchos\libSkiaSharp.framework" Kind="Framework" />
+  </ItemGroup>
+
+  <!-- Xamarin.Mac -->
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinmac'))">
+    <DefineConstants>$(DefineConstants);__MACOS__</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('xamarinmac'))">
+    <Compile Include="AssemblyInfo.mac.cs" />
+    <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
+    <ObjcBindingCoreSource Include="StructsAndEnums.cs" />
+    <ObjcBindingNativeLibrary Include="..\..\output\native\osx\libSkiaSharp.dylib" Link="libSkiaSharp.dylib" />
+  </ItemGroup>
+
+  <!-- Tizen -->
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('tizen'))">
+    <DefineConstants>$(DefineConstants);__TIZEN__;</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('tizen'))">
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <None Include="..\..\output\native\tizen\armel\libSkiaSharp.so" Link="nuget\runtimes\tizen-armel\native\libSkiaSharp.so" />
+    <None Include="..\..\output\native\tizen\i386\libSkiaSharp.so" Link="nuget\runtimes\tizen-x86\native\libSkiaSharp.so" />
+  </ItemGroup>
+
+  <!-- UWP -->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('uap'))">
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.8" />
+    <None Include="..\..\output\native\uwp\x64\libSkiaSharp.dll" Link="nuget\runtimes\win10-x64\nativeassets\uap10.0\libSkiaSharp.dll" />
+    <None Include="..\..\output\native\uwp\x86\libSkiaSharp.dll" Link="nuget\runtimes\win10-x86\nativeassets\uap10.0\libSkiaSharp.dll" />
+    <None Include="..\..\output\native\uwp\arm\libSkiaSharp.dll" Link="nuget\runtimes\win10-arm\nativeassets\uap10.0\libSkiaSharp.dll" />
+    <None Include="..\..\output\native\uwp\x64\libGLESv2.dll" Link="nuget\runtimes\win10-x64\nativeassets\uap10.0\libGLESv2.dll" />
+    <None Include="..\..\output\native\uwp\x86\libGLESv2.dll" Link="nuget\runtimes\win10-x86\nativeassets\uap10.0\libGLESv2.dll" />
+    <None Include="..\..\output\native\uwp\arm\libGLESv2.dll" Link="nuget\runtimes\win10-arm\nativeassets\uap10.0\libGLESv2.dll" />
+    <None Include="..\..\output\native\uwp\x64\libEGL.dll" Link="nuget\runtimes\win10-x64\nativeassets\uap10.0\libEGL.dll" />
+    <None Include="..\..\output\native\uwp\x86\libEGL.dll" Link="nuget\runtimes\win10-x86\nativeassets\uap10.0\libEGL.dll" />
+    <None Include="..\..\output\native\uwp\arm\libEGL.dll" Link="nuget\runtimes\win10-arm\nativeassets\uap10.0\libEGL.dll" />
+  </ItemGroup>
+
+  <Import Project="..\..\source\SkiaSharp.Build.targets" />
+</Project>
