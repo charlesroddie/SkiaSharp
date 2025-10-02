@@ -11,7 +11,7 @@
     <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\binding\SkiaSharp.Classic\SkiaSharp.Classic.csproj" />
+    <ProjectReference Include="..\..\..\binding\SkiaSharp\SkiaSharp.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\output\native\uwp\x64\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-x64\nativeassets\uap10.0\%(Filename)%(Extension)" />
