@@ -13,12 +13,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\binding\SkiaSharp\SkiaSharp.csproj" />
   </ItemGroup>
-  <ItemGroup>
+  <!--<ItemGroup>
     <None Include="..\..\..\output\native\uwp\x64\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-x64\nativeassets\uap10.0\%(Filename)%(Extension)" />
     <None Include="..\..\..\output\native\uwp\x86\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-x86\nativeassets\uap10.0\%(Filename)%(Extension)" />
     <None Include="..\..\..\output\native\uwp\arm\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-arm\nativeassets\uap10.0\%(Filename)%(Extension)" />
     <None Include="..\..\..\output\native\uwp\arm64\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-arm64\nativeassets\uap10.0\%(Filename)%(Extension)" />
-  </ItemGroup>
+  </ItemGroup>-->
   <ItemGroup>
     <Compile Include="..\SkiaSharp.Views.Shared\**\*.cs" Link="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
