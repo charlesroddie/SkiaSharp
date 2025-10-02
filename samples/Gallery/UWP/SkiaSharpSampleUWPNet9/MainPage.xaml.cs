@@ -1,6 +1,6 @@
 ﻿using System;
 using SkiaSharp;
-using SkiaSharp.Views.UWP;
+using SkiaSharp.Views.Windows;
 using Windows.UI.Xaml.Controls;
 
 namespace SkiaSharpSampleUWPNet9

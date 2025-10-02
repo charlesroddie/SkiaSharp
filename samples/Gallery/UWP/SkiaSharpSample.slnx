@@ -8,6 +8,7 @@
   <Project Path="../../../binding/HarfBuzzSharp/HarfBuzzSharp.csproj" />
   <Project Path="../../../binding/SkiaSharp/SkiaSharp.csproj" />
   <Project Path="../../../source/SkiaSharp.HarfBuzz/SkiaSharp.HarfBuzz/SkiaSharp.HarfBuzz.csproj" />
+  <Project Path="../../../source/SkiaSharp.Views/SkiaSharp.Views.UWP/SkiaSharp.Views.UWP.csproj" />
   <Project Path="SkiaSharpSample/SkiaSharpSample.csproj">
     <Platform Solution="*|Any CPU" Project="x64" />
     <Platform Solution="*|ARM64" Project="ARM64" />
