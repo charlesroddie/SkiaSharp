@@ -1,10 +1,14 @@
 <Project Sdk="MSBuild.Sdk.Extras/3.0.44">
   <PropertyGroup>
     <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>SkiaSharp.Views.UWP</RootNamespace>
     <AssemblyName>SkiaSharp.Views.UWP</AssemblyName>
     <PackagingGroup>SkiaSharp.Views</PackagingGroup>
     <PackagingPlatform>uap10.0</PackagingPlatform>
+    <UseUwp>true</UseUwp>
+    <IsAotCompatible>true</IsAotCompatible>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\binding\SkiaSharp.Classic\SkiaSharp.Classic.csproj" />
