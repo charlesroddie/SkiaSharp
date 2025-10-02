@@ -1,5 +1,9 @@
 <Project>
 
   <Import Project="$(MSBuildThisFileDirectory)..\source\SkiaSharp.Build.props" />
+  <PropertyGroup>
+    <!-- Temporarily override to build only basic target frameworks -->
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
+  </PropertyGroup>
 
 </Project>
