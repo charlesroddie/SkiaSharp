@@ -15,4 +15,11 @@
     <Platform Solution="*|x86" Project="x86" />
     <Deploy />
   </Project>
+  <Project Path="SkiaSharpSampleUWPNet9/SkiaSharpSampleUWPNet9.csproj" Id="be645e00-5371-4138-a803-e1bd3ca037b5">
+    <Platform Solution="*|Any CPU" Project="x64" />
+    <Platform Solution="*|ARM64" Project="arm64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Deploy />
+  </Project>
 </Solution>
