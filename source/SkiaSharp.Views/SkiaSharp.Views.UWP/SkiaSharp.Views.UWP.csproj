@@ -9,17 +9,29 @@
     <UseUwp>true</UseUwp>
     <IsAotCompatible>true</IsAotCompatible>
     <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Disable default compile items to avoid duplicates -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.22621.3233" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\binding\SkiaSharp\SkiaSharp.csproj" />
   </ItemGroup>
-  <!--<ItemGroup>
-    <None Include="..\..\..\output\native\uwp\x64\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-x64\nativeassets\uap10.0\%(Filename)%(Extension)" />
-    <None Include="..\..\..\output\native\uwp\x86\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-x86\nativeassets\uap10.0\%(Filename)%(Extension)" />
-    <None Include="..\..\..\output\native\uwp\arm\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-arm\nativeassets\uap10.0\%(Filename)%(Extension)" />
-    <None Include="..\..\..\output\native\uwp\arm64\SkiaSharp.Views.Interop.UWP*" Link="nuget\runtimes\win10-arm64\nativeassets\uap10.0\%(Filename)%(Extension)" />
-  </ItemGroup>-->
+
   <ItemGroup>
-    <Compile Include="..\SkiaSharp.Views.Shared\**\*.cs" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\SkiaSharp.Views.Shared\**\*.cs" Link="Shared\%(RecursiveDir)%(Filename)%(Extension)" />
+    <!-- Local UWP-specific file -->
+    <Compile Include="SKXamlCanvas.cs" />
+    <!-- TODO: Create UWP-specific versions of these files -->
+    <!-- <Compile Include="SKSwapChainPanel.cs" /> -->
+    <!-- <Compile Include="UWPExtensions.cs" /> -->
+    <!-- <Compile Include="AngleSwapChainPanel.cs" /> -->
+    <!-- <Compile Include="GlesInterop\Egl.cs" /> -->
+    <!-- <Compile Include="GlesInterop\GlesContext.cs" /> -->
   </ItemGroup>
 </Project>
